@@ -1,0 +1,5 @@
+- name: Install Development Tools
+  yum: name={{item}}
+  with_items:
+    - gcc-c++
+    - make

@@ -1,0 +1,64 @@
+---
+- name: This is a play to install and configure homebride on a RHEL7 system
+  hosts: all
+  become: true
+  vars_files:
+  - vars/main.yml
+  - vars/secrets.yml
+
+  roles:
+  - role: geerlingguy.repo-epel
+  - role: nodejs-dev
+  - role: geerlingguy.nodejs
+    nodejs_version: "8.x"
+    npm_config_unsafe_perm: "true"
+
+  tasks:
+  - name: Set Timezone to EuropeLondon
+    timezone:
+      name: "Europe/London"
+
+  - name: create homebridge user
+    user:
+      name: homebridge
+      comment: Homebridge
+      system: yes
+
+  - name: create config directory
+    file:
+      path: "~homebridge/.homebridge"
+      state: directory
+      owner: homebridge
+      group: homebridge
+    notify: reload homebridge
+
+  - name: generate config file
+    template:
+      src: config.json.j2
+      dest: "~homebridge/.homebridge/config.json"
+      owner: homebridge
+      group: homebridge
+    notify: reload homebridge
+
+  - name: install service
+    copy:
+      src: homebridge.service
+      dest: /lib/systemd/system/
+      owner: root
+      group: root
+      mode: 0644
+    notify: reload homebridge
+    register: service
+
+  - name: activate service
+    service:
+      name: homebridge
+      enabled: yes
+    when: service.changed
+
+  handlers:
+  - name: reload homebridge
+    service:
+      name: homebridge
+      enabled: yes
+      state: reloaded

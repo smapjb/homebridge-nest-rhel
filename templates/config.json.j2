@@ -1,0 +1,18 @@
+{
+"bridge": {
+"name": "Homebridge",
+"username": "CC:22:3D:E3:37:48",
+"pin": "987-65-432"
+},
+"description": "Homebridge for connecting Nest to the homekit.",
+
+"platforms": [
+   	{
+   		"platform": "Nest",
+   		"clientId": "{{ homebridge_clientid }}",
+   		"clientSecret": "{{ homebridge_clientSecret }}",
+        "token": "{{ homebridge_token }}"
+   	}
+   ]
+
+}

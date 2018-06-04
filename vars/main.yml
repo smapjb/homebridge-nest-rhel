@@ -1,0 +1,4 @@
+nodejs_npm_global_packages:
+  - name: node-gyp
+  - name: homebridge
+  - name: homebridge-nest
